@@ -1,0 +1,30 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_embed_data")
+load("@bazel_gazelle//:def.bzl", "gazelle")
+
+package(default_visibility = ["//visibility:public"])
+
+# gazelle:prefix github.com/actions-on-google/gactions/cmd/notices
+gazelle(name = "gazelle")
+
+go_embed_data(
+    name = "licenses_go",
+    srcs = [
+        "licenses.yaml"
+    ],
+    package = "notices",
+    var = "licenseFiles",
+)
+
+go_library(
+    name = "notices",
+    srcs = [
+        ":licenses_go",
+        "notices.go",
+    ],
+    importpath = "github.com/actions-on-google/gactions/cmd/notices",
+    deps = [
+        "//log",
+        "@com_github_spf13_cobra//:go_default_library",
+        "@in_gopkg_yaml//:go_default_library",
+    ],
+)

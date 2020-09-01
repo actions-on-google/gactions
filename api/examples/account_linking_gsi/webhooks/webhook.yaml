@@ -1,0 +1,6 @@
+httpsEndpoint:
+  baseUrl: https://www.google.com
+  endpointApiVersion: 1
+  httpHeaders:
+    key: content-type
+    value: application/json

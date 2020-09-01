@@ -1,0 +1,9 @@
+localizedSettings:
+  developerEmail: test@google.com
+  developerName: example
+  displayName: 角色警报
+  fullDescription: 角色警報可幫助喚醒孩子，並讓他們與熟悉的角色一起度過美好的一天。警報包括警報確認，鈴聲，字符跟進，貪睡和取消功能
+  privacyPolicyUrl: https://policies.google.com/privacy
+  pronunciation: 角色警报
+  shortDescription: 提供字符警報所需的資源。最終用戶不會直接觸發它
+  smallLogoImage: $resources.images.square

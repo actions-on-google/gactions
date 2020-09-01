@@ -1,0 +1,1 @@
+exports_files(["manifest.yaml"], visibility=["//visibility:public"])

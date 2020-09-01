@@ -1,0 +1,5 @@
+accountLinking:
+  enableAccountCreation: true
+  linkingType: GOOGLE_SIGN_IN
+category: GAMES_AND_TRIVIA
+projectId: placeholder-project

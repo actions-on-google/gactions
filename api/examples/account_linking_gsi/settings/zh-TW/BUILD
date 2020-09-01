@@ -1,0 +1,1 @@
+exports_files(["settings.yaml"], visibility=["//visibility:public"])

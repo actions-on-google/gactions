@@ -1,0 +1,140 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+load("@bazel_gazelle//:def.bzl", "gazelle")
+
+package(default_visibility = ["//visibility:public"])
+
+# gazelle:prefix github.com/actions-on-google/gactions/api/
+gazelle(name = "gazelle")
+
+test_suite(
+    name = "all_tests",
+    tags = ["-notwindows"],
+)
+
+go_library(
+    name = "yamlutils",
+    srcs = ["yamlutils.go"],
+    importpath = "github.com/actions-on-google/gactions/api/yamlutils",
+    deps = ["@in_gopkg_yaml//:go_default_library"],
+)
+
+go_test(
+    name = "yamlutils_test",
+    size = "small",
+    srcs = ["yamlutils_test.go"],
+    data = [
+        "testdata/google_fulfillments_valid.yaml",
+        "testdata/google_fulfillments_with_extra_fields.yaml",
+        "testdata/google_fulfillments_with_missing_fields.yaml",
+        "testdata/localized_settings_valid.yaml",
+        "testdata/manifest_invalid.yaml",
+        "testdata/manifest_valid.yaml",
+        "testdata/settings_valid.yaml",
+    ],
+    embed = [":yamlutils"],
+    deps = [
+        "@com_github_protolambda_messagediff//:go_default_library",
+        "@in_gopkg_yaml//:go_default_library",
+    ],
+)
+
+go_library(
+    name = "sdk",
+    srcs = ["sdk.go"],
+    importpath = "github.com/actions-on-google/gactions/api/sdk",
+    deps = [
+        ":apiutils",
+        ":request",
+        "//cmd/version",
+        "//log",
+        "//project",
+        "//project:studio",
+        "@com_github_pborman_uuid//:go_default_library",
+        "@in_gopkg_yaml//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "sdk_test",
+    size = "small",
+    srcs = ["sdk_test.go"],
+    embed = [":sdk"],
+    tags = ["notwindows"],
+    data = [
+        "//api/examples/account_linking_gsi/actions:actions.yaml",
+        "//api/examples/account_linking_gsi:manifest.yaml",
+        "//api/examples/account_linking_gsi/resources/audio:confirmation_01.mp3",
+        "//api/examples/account_linking_gsi/resources/images:smallLogo.jpg",
+        "//api/examples/account_linking_gsi/resources/images/zh-TW:smallLogo.jpg",
+        "//api/examples/account_linking_gsi/settings:settings.yaml",
+        "//api/examples/account_linking_gsi/settings/zh-TW:settings.yaml",
+        "//api/examples/account_linking_gsi/webhooks:webhook.yaml",
+    ],
+    deps = [
+        ":request",
+        ":testutils",
+        ":yamlutils",
+        "//project",
+        "//project:studio",
+        "@com_github_google_go_cmp//cmp:go_default_library",
+        "@com_github_google_go_cmp//cmp/cmpopts:go_default_library",
+        "@org_golang_x_oauth2//:go_default_library",
+    ],
+)
+
+go_library(
+    name = "apiutils",
+    srcs = ["apiutils.go"],
+    importpath = "github.com/actions-on-google/gactions/api/apiutils",
+    deps = [
+        "//log",
+        "@org_golang_x_oauth2//:go_default_library",
+        "@org_golang_x_oauth2//google:go_default_library",
+    ],
+)
+
+go_test(
+    name = "apiutils_test",
+    size = "small",
+    srcs = ["apiutils_test.go"],
+    embed = [":apiutils"],
+    tags = [
+        "notwindows",  # b/151969189 for background
+    ],
+    deps = [
+        ":testutils",
+        "@com_github_google_go_cmp//cmp:go_default_library",
+        "@com_github_google_go_cmp//cmp/cmpopts:go_default_library",
+        "@org_golang_x_oauth2//:go_default_library",
+    ],
+)
+
+go_library(
+    name = "request",
+    srcs = ["request.go"],
+    importpath = "github.com/actions-on-google/gactions/api/request",
+    deps = [
+        ":yamlutils",
+        "//log",
+        "//project:studio",
+    ],
+)
+
+go_test(
+    name = "request_test",
+    size = "small",
+    srcs = ["request_test.go"],
+    embed = [":request"],
+    deps = [
+        "@com_github_google_go_cmp//cmp:go_default_library",
+        "@com_github_google_go_cmp//cmp/cmpopts:go_default_library",
+        "@com_github_protolambda_messagediff//:go_default_library",
+        "@in_gopkg_yaml//:go_default_library",
+    ],
+)
+
+go_library(
+    name = "testutils",
+    srcs = ["testutils.go"],
+    importpath = "github.com/actions-on-google/gactions/api/testutils",
+)

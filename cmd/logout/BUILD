@@ -1,0 +1,25 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@bazel_gazelle//:def.bzl", "gazelle")
+
+package(default_visibility = ["//visibility:public"])
+
+# gazelle:prefix github.com/actions-on-google/gactions/cmd/logout
+gazelle(name = "gazelle")
+
+test_suite(
+    name = "all_tests",
+    tags = ["-notwindows"],
+)
+
+go_library(
+    name = "logout",
+    srcs = ["logout.go"],
+    importpath = "github.com/actions-on-google/gactions/cmd/logout",
+    deps = [
+        "//api:apiutils",
+        "//api:sdk",
+        "//log",
+        "//project",
+        "@com_github_spf13_cobra//:go_default_library",
+    ],
+)
