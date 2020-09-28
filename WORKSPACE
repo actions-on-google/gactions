@@ -56,6 +56,12 @@ go_repository(
 )
 
 go_repository(
+    name = "com_github_inconshreveable_mousetrap",
+    commit = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75",
+    importpath = "github.com/inconshreveable/mousetrap"
+)
+
+go_repository(
     name = "com_github_pborman_uuid",
     commit = "5b6091a6a160ee5ce12917b21ab96acec2a4fdc0",
     importpath = "github.com/pborman/uuid",
