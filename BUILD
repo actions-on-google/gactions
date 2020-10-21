@@ -73,6 +73,7 @@ go_library(
         "//cmd/notices",
         "//cmd/pull",
         "//cmd/push",
+        "//cmd/releasechannels",
         "//cmd/version",
         "//log",
         "//project:studio",

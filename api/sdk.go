@@ -171,6 +171,10 @@ func readVersionHTTPEndpoint(projectID, versionID string) string {
 	return fmt.Sprintf("v2alpha/projects/%s/versions/%s:read", projectID, versionID)
 }
 
+func listReleaseChannelsHTTPEndpoint(projectID string) string {
+	return fmt.Sprintf("v2alpha/projects/%s/releaseChannels", projectID)
+}
+
 func check(cfgs map[string][]byte) error {
 	if len(cfgs) == 0 {
 		return errors.New("configuration files for your Action were not found")
@@ -1062,4 +1066,44 @@ func sendRequest(client *http.Client, requestURL string, body []byte, files map[
 		}
 	}
 	return nil
+}
+
+// ListReleaseChannelsJSON implements ListReleaseChannels endpoint of SDK server.
+func ListReleaseChannelsJSON(ctx context.Context, proj project.Project) ([]project.ReleaseChannel, error) {
+	clientSecret, err := proj.ClientSecretJSON()
+	if err != nil {
+		return nil, err
+	}
+	client, err := apiutils.NewHTTPClient(ctx, clientSecret)
+	if err != nil {
+		return nil, err
+	}
+	requestURL := httpAddr(listReleaseChannelsHTTPEndpoint(proj.ProjectID()))
+	var res []project.ReleaseChannel
+	pageToken := ""
+
+	for {
+		body, err := sendListRequest(pageToken, requestURL, client)
+		if err != nil {
+			return nil, err
+		}
+		type listReleaseChannelsResponse struct {
+			ReleaseChannels []project.ReleaseChannel `json:"releaseChannels"`
+			NextPageToken   string                   `json:"nextPageToken"`
+		}
+		r := listReleaseChannelsResponse{}
+		if err = json.Unmarshal(body, &r); err != nil {
+			return nil, err
+		}
+		pageToken = r.NextPageToken
+		for _, v := range r.ReleaseChannels {
+			// API returns releaseChannels/{releaseChannelName}.
+			v.Name = strings.TrimPrefix(v.Name, "releaseChannels/")
+			res = append(res, v)
+		}
+		if pageToken == "" {
+			break
+		}
+	}
+	return res, nil
 }

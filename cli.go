@@ -27,6 +27,7 @@ import (
 	"github.com/actions-on-google/gactions/cmd/notices"
 	"github.com/actions-on-google/gactions/cmd/pull"
 	"github.com/actions-on-google/gactions/cmd/push"
+	"github.com/actions-on-google/gactions/cmd/releasechannels"
 	"github.com/actions-on-google/gactions/cmd/version"
 	"github.com/actions-on-google/gactions/log"
 	"github.com/actions-on-google/gactions/project/studio"
@@ -72,6 +73,7 @@ func Command(ctx context.Context, name string, debug bool, ver string) *cobra.Co
 	decrypt.AddCommand(ctx, root, project)
 	version.AddCommand(root)
 	notices.AddCommand(root)
+	releasechannels.AddCommand(ctx, root, project)
 
 	root.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
 		// Init logging first since functions below may call log.

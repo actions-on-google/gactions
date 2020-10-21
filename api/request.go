@@ -94,6 +94,13 @@ func ReadVersion(name string, versionID string) map[string]interface{} {
 	}
 }
 
+// ListReleaseChannels returns a list of release channels with current and pending versions on each channel.
+func ListReleaseChannels(name string) map[string]interface{} {
+	return map[string]interface{}{
+		"parent": fmt.Sprintf("projects/%v", name),
+	}
+}
+
 // addConfigFiles adds configFiles w/o a resource bundle to a request.
 func addConfigFiles(req map[string]interface{}, configFiles map[string][]byte, root string) error {
 	cfgs := make(map[string][]interface{})

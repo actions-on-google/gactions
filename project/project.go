@@ -21,6 +21,14 @@ type SampleProject struct {
 	HostedURL string `json:"hostedUrl"`
 }
 
+// ReleaseChannel has information about release channels for the project
+// and their current and pending versions.
+type ReleaseChannel struct {
+	Name           string `json:"name"`
+	CurrentVersion string `json:"currentVersion"`
+	PendingVersion string `json:"pendingVersion"`
+}
+
 // Project represents the concept of an AoG project.
 // The concrete implementations will include existing types of projects (i.e. Studio)
 // This is used by the CLI for various commands.
