@@ -549,24 +549,36 @@ func (p Studio) ProjectID() string {
 }
 
 // SetProjectID sets projectID for studio. It can come from two possible places:
-// settings.yaml or command line flag. In case both are specified, the CLI
-// will give preference to command line flag, but will provide a warning to a developer.
+// settings.yaml or command line flag.
+// Case 1: If projectID is missing in both settings.yaml and command line flag, return an error.
+// Case 2: If projectID is missing in the command line flag, and projectID in settings.yaml is "placeholder_project", show a warning.
+// Case 3: If projectID is missing in the command line flag, and projectID in settings.yaml is something other than "placeholder_project", proceed with no warnings.
+// Case 4: If projectID is present in the command line flag, and absent in settings.yaml, proceed with no warnings.
+// Case 5: If projectID is present in the command line flag, and projectID in settings.yaml is "placeholder_project", show an info message.
+// Case 6: If projectID is present in both places, show an info message.
 func (p *Studio) SetProjectID(flag string) error {
 	if p.ProjectID() != "" {
 		return errors.New("can not reset the project ID")
 	}
 	pid, err := pidFromSettings(p.ProjectRoot())
 	if err != nil && flag == "" {
+		// Case 1.
 		log.Errorf(`Project ID is missing. Specify the project ID in settings/settings.yaml, or via flag, if applicable.`)
 		return errors.New("no project ID is specified")
-	}
-	if err == nil && flag != "" && flag != pid {
-		log.Warnf("Two Google Project IDs are specified: %q via the flag, %q via the settings file. %q takes a priority and will be used in the remainder of the command.", flag, pid, flag)
-		p.projectID = flag
-	} else if pid != "" {
+	} else if err == nil && flag == "" && pid == "placeholder_project" {
+		// Case 2.
+		log.Warnf("%v is not a valid project id. Update %v file with your Google project id found in your GCP console. E.g. \"123456789\" or specify a project id via a flag.", pid, filepath.Join(p.ProjectRoot(), "settings", "settings.yaml"))
 		p.projectID = pid
-	} else {
+	} else if err == nil && flag != "" && flag != pid {
+		// Case 5,6.
+		log.Infof("Two Google Project IDs are specified: %q via the flag, %q via the settings file. %q takes a priority and will be used in the remainder of the command.", flag, pid, flag)
 		p.projectID = flag
+	} else if flag != "" {
+		// Case 4.
+		p.projectID = flag
+	} else {
+		// Case 3.
+		p.projectID = pid
 	}
 	log.Infof("Using %q.\n", p.ProjectID())
 	return nil
@@ -631,9 +643,6 @@ func pidFromSettings(root string) (string, error) {
 	}
 	if set.ProjectID == "" {
 		return "", errors.New("projectId is not present in the settings file")
-	}
-	if set.ProjectID == "placeholder_project" {
-		log.Warnf("%v is not a valid project id. Update %v file with your Google project id found in your GCP console. E.g. \"123456789\"", set.ProjectID, fp)
 	}
 	return set.ProjectID, nil
 }

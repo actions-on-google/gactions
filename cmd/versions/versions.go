@@ -61,6 +61,7 @@ func printVersions(versions []project.Version) error {
 	for _, version := range versions {
 		fmt.Fprintf(w, "%v\t%v\t%v\t%v\t\n", versionID(version.ID), version.State.Message, version.LastModifiedBy, formatModifiedOn(version.ModifiedOn))
 	}
+	fmt.Fprintf(w, "To learn more about release channels, visit https://developers.google.com/assistant/actionssdk/reference/rest/Shared.Types/ReleaseChannel.")
 	fmt.Fprintln(w)
 	return w.Flush()
 }

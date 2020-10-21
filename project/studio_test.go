@@ -383,25 +383,35 @@ func TestSetProjectID(t *testing.T) {
 		flag     string
 		want     string
 	}{
-		{
-			settings: []byte("projectId: hello-world"),
-			flag:     "foobar",
-			want:     "foobar",
+		{ // Case 1.
+			settings: nil,
+			flag:     "",
+			want:     "",
 		},
-		{
+		{ // Case 2.
+			settings: []byte("projectId: placeholder_project"),
+			flag:     "",
+			want:     "placeholder_project",
+		},
+		{ // Case 3.
 			settings: []byte("projectId: hello-world"),
 			flag:     "",
 			want:     "hello-world",
 		},
-		{
+		{ // Case 4.
 			settings: nil,
 			flag:     "foobar",
 			want:     "foobar",
 		},
+		{ // Case 5.
+			settings: []byte("projectId: placeholder_project"),
+			flag:     "hello-world",
+			want:     "hello-world",
+		},
 		{
-			settings: nil,
-			flag:     "",
-			want:     "",
+			settings: []byte("projectId: hello-world"),
+			flag:     "foobar",
+			want:     "foobar",
 		},
 	}
 	for _, tc := range tests {

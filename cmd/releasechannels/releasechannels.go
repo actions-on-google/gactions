@@ -63,6 +63,7 @@ func printReleaseChannels(releaseChannels []project.ReleaseChannel) {
 	for _, releaseChannel := range releaseChannels {
 		fmt.Fprintf(w, "%v\t%v\t%v\t\n", releaseChannelName(releaseChannel.Name), versionID(releaseChannel.CurrentVersion), versionID(releaseChannel.PendingVersion))
 	}
+	fmt.Fprintf(w, "To learn more about release channels, visit https://developers.google.com/assistant/actionssdk/reference/rest/Shared.Types/ReleaseChannel.")
 	fmt.Fprintln(w)
 	w.Flush()
 }
