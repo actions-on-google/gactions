@@ -47,9 +47,9 @@ import (
 const (
 	actionsProdURL             = "actions.googleapis.com"
 	actionsConsoleProdURL      = "console.actions.google.com"
-	encryptEndpoint            = "v2alpha:encryptSecret"
-	decryptEndpoint            = "v2alpha:decryptSecret"
-	listSampleProjectsEndpoint = "v2alpha/sampleProjects"
+	encryptEndpoint            = "v2:encryptSecret"
+	decryptEndpoint            = "v2:decryptSecret"
+	listSampleProjectsEndpoint = "v2/sampleProjects"
 	// Prod version of CurEnv
 	Prod = "prod"
 	// ProdChannel of AoG release
@@ -152,31 +152,31 @@ func httpAddr(endpoint string) string {
 }
 
 func writeDraftHTTPEndpoint(projectID string) string {
-	return fmt.Sprintf("v2alpha/projects/%s/draft:write", projectID)
+	return fmt.Sprintf("v2/projects/%s/draft:write", projectID)
 }
 
 func previewHTTPEndpoint(projectID string) string {
-	return fmt.Sprintf("v2alpha/projects/%s/preview:write", projectID)
+	return fmt.Sprintf("v2/projects/%s/preview:write", projectID)
 }
 
 func versionHTTPEndpoint(projectID string) string {
-	return fmt.Sprintf("v2alpha/projects/%s/versions:create", projectID)
+	return fmt.Sprintf("v2/projects/%s/versions:create", projectID)
 }
 
 func readDraftHTTPEndpoint(projectID string) string {
-	return fmt.Sprintf("v2alpha/projects/%s/draft:read", projectID)
+	return fmt.Sprintf("v2/projects/%s/draft:read", projectID)
 }
 
 func readVersionHTTPEndpoint(projectID, versionID string) string {
-	return fmt.Sprintf("v2alpha/projects/%s/versions/%s:read", projectID, versionID)
+	return fmt.Sprintf("v2/projects/%s/versions/%s:read", projectID, versionID)
 }
 
 func listReleaseChannelsHTTPEndpoint(projectID string) string {
-	return fmt.Sprintf("v2alpha/projects/%s/releaseChannels", projectID)
+	return fmt.Sprintf("v2/projects/%s/releaseChannels", projectID)
 }
 
 func listVersionsHTTPEndpoint(projectID string) string {
-	return fmt.Sprintf("v2alpha/projects/%s/versions", projectID)
+	return fmt.Sprintf("v2/projects/%s/versions", projectID)
 }
 
 func check(cfgs map[string][]byte) error {
