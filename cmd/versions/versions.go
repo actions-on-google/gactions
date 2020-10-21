@@ -21,8 +21,8 @@ var modifiedOnRegExp = regexp.MustCompile(`(?P<date>\d{4}-\d{2}-\d{2})+T+(?P<tim
 func AddCommand(ctx context.Context, root *cobra.Command, project project.Project) {
 	versions := &cobra.Command{
 		Use:   "versions",
-		Short: "This command performs versions specific actions.",
-		Long:  "This command performs versions specific actions",
+		Short: "This is the main command for viewing and managing versions. See below for a complete list of sub-commands.",
+		Long:  "This is the main command for viewing and managing versions. See below for a complete list of sub-commands.",
 		Args:  cobra.MinimumNArgs(1),
 	}
 	list := &cobra.Command{

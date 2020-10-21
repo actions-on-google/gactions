@@ -22,8 +22,8 @@ var versionIDRegExp = regexp.MustCompile(`^projects/[^/]+/versions/(?P<versionID
 func AddCommand(ctx context.Context, root *cobra.Command, project project.Project) {
 	releaseChannels := &cobra.Command{
 		Use:   "release-channels",
-		Short: "This command performs release channels specific actions.",
-		Long:  "This command performs release channels specific actions.",
+		Short: "This is the main command for viewing and managing release channels. See below for a complete list of sub-commands.",
+		Long:  "This is the main command for viewing and managing release channels. See below for a complete list of sub-commands.",
 		Args:  cobra.MinimumNArgs(1),
 	}
 	list := &cobra.Command{
