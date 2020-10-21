@@ -92,6 +92,17 @@ func TestListReleaseChannels(t *testing.T) {
 	}
 }
 
+func TestListVersions(t *testing.T) {
+	projectID := "project-123"
+	want := map[string]interface{}{
+		"parent": fmt.Sprintf("projects/%v", projectID),
+	}
+	got := ListVersions(projectID)
+	if diff := cmp.Diff(want, got); diff != "" {
+		t.Errorf("ListVersions returned an incorrect value: diff (-want, +got)\n%s", diff)
+	}
+}
+
 func TestAddConfigFiles(t *testing.T) {
 	tests := []struct {
 		files map[string][]byte

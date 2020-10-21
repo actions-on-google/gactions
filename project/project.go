@@ -29,6 +29,19 @@ type ReleaseChannel struct {
 	PendingVersion string `json:"pendingVersion"`
 }
 
+// VersionState has information about state of the version.
+type VersionState struct {
+	Message string `json:"message"`
+}
+
+// Version has information about versions and their metadata for a project.
+type Version struct {
+	ID             string       `json:"name"`
+	State          VersionState `json:"versionState"`
+	LastModifiedBy string       `json:"creator"`
+	ModifiedOn     string       `json:"updateTime"`
+}
+
 // Project represents the concept of an AoG project.
 // The concrete implementations will include existing types of projects (i.e. Studio)
 // This is used by the CLI for various commands.

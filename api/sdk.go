@@ -175,6 +175,10 @@ func listReleaseChannelsHTTPEndpoint(projectID string) string {
 	return fmt.Sprintf("v2alpha/projects/%s/releaseChannels", projectID)
 }
 
+func listVersionsHTTPEndpoint(projectID string) string {
+	return fmt.Sprintf("v2alpha/projects/%s/versions", projectID)
+}
+
 func check(cfgs map[string][]byte) error {
 	if len(cfgs) == 0 {
 		return errors.New("configuration files for your Action were not found")
@@ -1103,6 +1107,46 @@ func ListReleaseChannelsJSON(ctx context.Context, proj project.Project) ([]proje
 		for _, v := range r.ReleaseChannels {
 			// API returns releaseChannels/{releaseChannelName}.
 			v.Name = strings.TrimPrefix(v.Name, "releaseChannels/")
+			res = append(res, v)
+		}
+		if pageToken == "" {
+			break
+		}
+	}
+	return res, nil
+}
+
+// ListVersionsJSON implements ListVersions endpoint of SDK server.
+func ListVersionsJSON(ctx context.Context, proj project.Project) ([]project.Version, error) {
+	clientSecret, err := proj.ClientSecretJSON()
+	if err != nil {
+		return nil, err
+	}
+	client, err := apiutils.NewHTTPClient(ctx, clientSecret)
+	if err != nil {
+		return nil, err
+	}
+	requestURL := httpAddr(listVersionsHTTPEndpoint(proj.ProjectID()))
+	var res []project.Version
+	pageToken := ""
+
+	for {
+		body, err := sendListRequest(pageToken, requestURL, client)
+		if err != nil {
+			return nil, err
+		}
+		type listVersionsResponse struct {
+			Versions      []project.Version `json:"versions"`
+			NextPageToken string            `json:"nextPageToken"`
+		}
+		r := listVersionsResponse{}
+		if err := json.Unmarshal(body, &r); err != nil {
+			return nil, err
+		}
+		pageToken = r.NextPageToken
+		for _, v := range r.Versions {
+			// API returns versions/{versionName}.
+			v.ID = strings.TrimPrefix(v.ID, "versions/")
 			res = append(res, v)
 		}
 		if pageToken == "" {

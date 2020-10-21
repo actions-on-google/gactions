@@ -75,6 +75,7 @@ go_library(
         "//cmd/push",
         "//cmd/releasechannels",
         "//cmd/version",
+        "//cmd/versions",
         "//log",
         "//project:studio",
         "@com_github_spf13_cobra//:go_default_library",
