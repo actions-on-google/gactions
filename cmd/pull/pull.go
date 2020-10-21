@@ -18,6 +18,7 @@ package pull
 import (
 	"context"
 	"fmt"
+	"net/url"
 
 	"github.com/actions-on-google/gactions/api/sdk"
 	"github.com/actions-on-google/gactions/log"
@@ -68,6 +69,7 @@ func AddCommand(ctx context.Context, root *cobra.Command, project project.Projec
 					return err
 				}
 			} else {
+				versionID = url.PathEscape(versionID)
 				if err := sdk.ReadVersionJSON(ctx, studioProj, force, clean, versionID); err != nil {
 					return err
 				}
