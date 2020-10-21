@@ -611,8 +611,12 @@ func keyInConfigResp(path string) (string, error) {
 		k = "scene"
 	case studio.IsType(path):
 		k = "type"
+	case studio.IsEntitySet(path):
+		k = "entitySet"
 	case studio.IsPrompt(path):
 		k = "staticPrompt"
+	case studio.IsDeviceFulfillment(path):
+		k = "deviceFulfillment"
 	case studio.IsResourceBundle(path):
 		k = "resourceBundle"
 	case studio.IsSettings(path):

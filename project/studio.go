@@ -144,9 +144,11 @@ func isConfigFile(filename string) bool {
 		IsGlobal(filename) ||
 		IsScene(filename) ||
 		IsType(filename) ||
+		IsEntitySet(filename) ||
 		IsWebhookDefinition(filename) ||
 		IsResourceBundle(filename) ||
 		IsPrompt(filename) ||
+		IsDeviceFulfillment(filename) ||
 		IsAccountLinkingSecret(filename)
 }
 
@@ -196,6 +198,11 @@ func IsType(filename string) bool {
 	return strings.HasPrefix(filename, path.Join("custom", "types")) && path.Ext(filename) == ".yaml"
 }
 
+// IsEntitySet returns true if the file contains an entity set declaration of an Actions project.
+func IsEntitySet(filename string) bool {
+	return strings.HasPrefix(filename, path.Join("custom", "entitySets")) && path.Ext(filename) == ".yaml"
+}
+
 // IsWebhook returns true if the file contains a webhook files of an Actions project.
 // This includes yaml and code files.
 func IsWebhook(filename string) bool {
@@ -205,6 +212,12 @@ func IsWebhook(filename string) bool {
 // IsPrompt returns true if the file contains a prompt of an Actions project.
 func IsPrompt(filename string) bool {
 	return strings.HasPrefix(filename, path.Join("custom", "prompts")) && path.Ext(filename) == ".yaml"
+}
+
+// IsDeviceFulfillment returns true if the file contains a device fulfillment declaration of a device Actions project.
+// Note: This value is not publicly available
+func IsDeviceFulfillment(filename string) bool {
+	return strings.HasPrefix(filename, "device") && path.Ext(filename) == ".yaml"
 }
 
 // IsResourceBundle returns true if the file contains a resource bundle. This will return true if

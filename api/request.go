@@ -135,12 +135,17 @@ func addConfigFiles(req map[string]interface{}, configFiles map[string][]byte, r
 			m["globalIntentEvent"] = mp
 		case studio.IsType(filename):
 			m["type"] = mp
+		case studio.IsEntitySet(filename):
+			m["entitySet"] = mp
 		case studio.IsPrompt(filename):
 			m["staticPrompt"] = mp
 		case studio.IsScene(filename):
 			m["scene"] = mp
 		case studio.IsVertical(filename):
 			m["verticalSettings"] = mp
+		// Note: This value is not publicly available
+		case studio.IsDeviceFulfillment(filename):
+			m["deviceFulfillment"] = mp
 		case studio.IsResourceBundle(filename):
 			m["resourceBundle"] = mp
 		default:
