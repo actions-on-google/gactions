@@ -14,6 +14,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var releaseChannelNameRegExp = regexp.MustCompile(`^projects/[^/]+/releaseChannels/(?P<releaseChannelName>[^/]+)$`)
+var releaseChannelPrefixRegExp = regexp.MustCompile(`^actions[\.]channels[\.](?P<unknownBuiltInReleaseChannelName>[^/]+)$`)
+var versionIDRegExp = regexp.MustCompile(`^projects/[^/]+/versions/(?P<versionID>[^/]+)$`)
+
 // AddCommand adds the release-channels list sub-command to the passed in root command.
 func AddCommand(ctx context.Context, root *cobra.Command, project project.Project) {
 	releaseChannels := &cobra.Command{
@@ -57,22 +61,34 @@ func printReleaseChannels(releaseChannels []project.ReleaseChannel) {
 	w.Init(os.Stdout, 40, 8, 1, '\t', 0)
 	fmt.Fprintln(w, "Release Channel\tCurrent Version\tPending Version\t")
 	for _, releaseChannel := range releaseChannels {
-		fmt.Fprintf(w, "%v\t%v\t%v\t\n", getReleaseChannelName(releaseChannel.Name), getVersionID(releaseChannel.CurrentVersion), getVersionID(releaseChannel.PendingVersion))
+		fmt.Fprintf(w, "%v\t%v\t%v\t\n", releaseChannelName(releaseChannel.Name), versionID(releaseChannel.CurrentVersion), versionID(releaseChannel.PendingVersion))
 	}
 	fmt.Fprintln(w)
 	w.Flush()
 }
 
-func getReleaseChannelName(releaseChannel string) string {
-	releaseChannelNameRegExp := regexp.MustCompile("^projects/[^//]+/releaseChannels/(?P<releaseChannelName>[^//]+)$")
-	if releaseChannelMatch := releaseChannelNameRegExp.FindStringSubmatch(releaseChannel); releaseChannelMatch == nil {
+func releaseChannelName(releaseChannel string) string {
+	releaseChannelMatch := releaseChannelNameRegExp.FindStringSubmatch(releaseChannel)
+	if releaseChannelMatch == nil {
 		return "N/A"
 	}
-	return releaseChannelNameRegExp.FindStringSubmatch(releaseChannel)[releaseChannelNameRegExp.SubexpIndex("releaseChannelName")]
+	releaseChannelName := releaseChannelMatch[releaseChannelNameRegExp.SubexpIndex("releaseChannelName")]
+
+	// If release channel is a known built-in release channel with a short name, fetch the short name and display it.
+	displayReleaseChannelName, found := sdk.BuiltInReleaseChannels[releaseChannelName]
+	if found {
+		return displayReleaseChannelName
+	}
+
+	// Else, check for prefix "actions.channels", and if present, remove it. This is used as a catch for built in channels without short names in the map.
+	releaseChannelPrefixMatch := releaseChannelPrefixRegExp.FindStringSubmatch(releaseChannelName)
+	if releaseChannelPrefixMatch == nil {
+		return releaseChannelName
+	}
+	return releaseChannelPrefixMatch[releaseChannelPrefixRegExp.SubexpIndex("unknownBuiltInReleaseChannelName")]
 }
 
-func getVersionID(version string) string {
-	versionIDRegExp := regexp.MustCompile("^projects/[^//]+/versions/(?P<versionID>[^//]+)$")
+func versionID(version string) string {
 	if versionIDMatch := versionIDRegExp.FindStringSubmatch(version); versionIDMatch == nil {
 		return "N/A"
 	}

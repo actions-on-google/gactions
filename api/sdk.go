@@ -66,7 +66,7 @@ var (
 	consoleAddr = "https://" + urlMap[CurEnv]["consoleURL"]
 	// responseBodyReadTimeout is a time limit to read body of HTTP response after response object is received.
 	responseBodyReadTimeout = 5 * time.Second
-	builtInReleaseChannels  = map[string]string{
+	BuiltInReleaseChannels = map[string]string{
 		ProdChannel:     "prod",
 	}
 )
@@ -588,8 +588,8 @@ func CreateVersionJSON(ctx context.Context, proj project.Project, channel string
 	if err := <-errCh; err != nil {
 		return err
 	}
-	if _, ok := builtInReleaseChannels[channel]; ok {
-		channel = builtInReleaseChannels[channel]
+	if _, ok := BuiltInReleaseChannels[channel]; ok {
+		channel = BuiltInReleaseChannels[channel]
 	}
 
 	log.DoneMsgln(fmt.Sprintf("Version %s has been successfully created and submitted for deployment to %s channel. ", versionID, channel))
