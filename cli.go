@@ -18,6 +18,7 @@ package cli
 import (
 	"context"
 
+	"github.com/actions-on-google/gactions/api/sdk"
 	"github.com/actions-on-google/gactions/cmd/decrypt"
 	"github.com/actions-on-google/gactions/cmd/deploy"
 	"github.com/actions-on-google/gactions/cmd/encrypt"
@@ -37,6 +38,7 @@ import (
 
 const (
 	verboseFlagName  = "verbose"
+	consumerFlagName = "consumer"
 )
 
 // Command returns a *cobra.Command setup with the common set of commands
@@ -49,6 +51,11 @@ func Command(ctx context.Context, name string, debug bool, ver string) *cobra.Co
 		SilenceErrors: true, // Would like to print errors ourselves.
 	}
 	root.PersistentFlags().BoolP(verboseFlagName, "v", false, "Display additional error information")
+	
+	root.PersistentFlags().String(consumerFlagName, "", "String identifying the caller to Google")
+	// This field is hidden as it's not documented and only used by tooling partners using the CLI.
+	root.PersistentFlags().MarkHidden(consumerFlagName)
+	
 	if ver == "" {
 		version.CliVersion = "gactions_debug"
 	} else {
@@ -82,11 +89,23 @@ func Command(ctx context.Context, name string, debug bool, ver string) *cobra.Co
 		if err := initLogging(cmd, debug); err != nil {
 			return err
 		}
+		if err := setConsumer(cmd); err != nil {
+			return err
+		}
 		return nil
 	}
 	return root
 }
 
+func setConsumer(cmd *cobra.Command) error {
+	consumer, err := cmd.Flags().GetString(consumerFlagName)
+	if err != nil {
+		return err
+	}
+	sdk.Consumer = consumer
+	log.Debugf("Set consumer to %s\n", consumer)
+	return nil
+}
 
 func initLogging(cmd *cobra.Command, debug bool) error {
 	isVerbose, err := cmd.Flags().GetBool(verboseFlagName)

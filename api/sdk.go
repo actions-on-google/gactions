@@ -64,6 +64,8 @@ var (
 	// CurEnv determines which version of the Actions API to call.
 	CurEnv      = Prod
 	consoleAddr = "https://" + urlMap[CurEnv]["consoleURL"]
+	// Consumer holds the string identifying the caller to Google. This is based on a command line flag.
+	Consumer = ""
 	// responseBodyReadTimeout is a time limit to read body of HTTP response after response object is received.
 	responseBodyReadTimeout = 5 * time.Second
 	BuiltInReleaseChannels = map[string]string{
@@ -411,7 +413,7 @@ func WriteDraftJSON(ctx context.Context, proj project.Project) error {
 		// This is done to help server to select the quota attributed to a
 		// projectID (i.e. developer's project), instead of the CLI project.
 		req.Header.Add("X-Goog-User-Project", projectID)
-		addUserAgent(req)
+		addClientHeaders(req)
 
 		resp, err := client.Do(req)
 
@@ -490,7 +492,7 @@ func WritePreviewJSON(ctx context.Context, proj project.Project, sandbox bool) e
 		// Sets timeout because Cloud Function deployment can take 1-2 minutes.
 		const timeoutSec = "180"
 		req.Header.Add("X-Server-Timeout", fmt.Sprintf("%v", timeoutSec))
-		addUserAgent(req)
+		addClientHeaders(req)
 
 		resp, err := client.Do(req)
 		if err != nil {
@@ -564,7 +566,7 @@ func CreateVersionJSON(ctx context.Context, proj project.Project, channel string
 		// projectID (i.e. developer's project), instead of the CLI project.
 		// https://cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject
 		req.Header.Add("X-Goog-User-Project", projectID)
-		addUserAgent(req)
+		addClientHeaders(req)
 
 		resp, err := client.Do(req)
 		if err != nil {
@@ -757,7 +759,10 @@ func findExtra(a map[string][]byte, b map[string]bool) []string {
 	return extra
 }
 
-func addUserAgent(req *http.Request) {
+func addClientHeaders(req *http.Request) {
+	if Consumer != "" {
+		req.Header.Add("Gactions-Consumer", Consumer)
+	}
 	ua := fmt.Sprintf("gactions/%s (%s %s)", version.CliVersion, runtime.GOOS, runtime.GOARCH)
 	req.Header.Add("User-Agent", ua)
 }
@@ -840,7 +845,7 @@ func EncryptSecretJSON(ctx context.Context, proj project.Project, secret string)
 			errCh <- err
 		}
 		req.Header.Add("Content-Type", "application/json")
-		addUserAgent(req)
+		addClientHeaders(req)
 		resp, err := client.Do(req)
 		if err != nil {
 			errCh <- err
@@ -897,7 +902,7 @@ func DecryptSecretJSON(ctx context.Context, proj project.Project, secret string,
 		return err
 	}
 	req.Header.Add("Content-Type", "application/json")
-	addUserAgent(req)
+	addClientHeaders(req)
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
@@ -927,7 +932,7 @@ func sendListRequest(pageToken, requestURL string, client *http.Client) ([]byte,
 	if err != nil {
 		return nil, err
 	}
-	addUserAgent(req)
+	addClientHeaders(req)
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -1031,7 +1036,7 @@ func sendRequest(client *http.Client, requestURL string, body []byte, files map[
 	// projectID (i.e. developer's project), instead of the CLI project.
 	// https://cloud.google.com/storage/docs/xml-api/reference-headers#xgooguserproject
 	req.Header.Add("X-Goog-User-Project", projectID)
-	addUserAgent(req)
+	addClientHeaders(req)
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
