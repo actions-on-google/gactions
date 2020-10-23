@@ -19,7 +19,11 @@ You will find the binary in `bazel-bin/gactions_/gactions`.
 
 ### Run Instructions
 
-To build and run the project:
+To setup your environment:
+
+1. `source ./scripts/configure.sh`
+
+To simultaneously build and run the project:
 
 1. `bazel run gactions`
 
