@@ -122,3 +122,11 @@ go_repository(
     remote = "https://github.com/golang/oauth2",
     vcs = "git",
 )
+
+go_repository(
+    name = "org_golang_x_sys",
+    commit = "d9b008d0a637a6daa9d387171bc2d206f4de1691",
+    importpath = "golang.org/x/sys",
+    remote = "https://github.com/golang/sys",
+    vcs = "git",
+)
