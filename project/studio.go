@@ -34,6 +34,7 @@ import (
 	"github.com/actions-on-google/gactions/api/yamlutils"
 	"github.com/actions-on-google/gactions/log"
 	"github.com/actions-on-google/gactions/project"
+	"gopkg.in/yaml.v2"
 )
 
 // Studio is an implementation of the AoG Studio project.
@@ -436,7 +437,7 @@ func ProjectID(proj project.Project) (string, error) {
 			}
 			if pid, present := mp["projectId"]; present {
 				if pid == "placeholder_project" {
-					log.Warnf("%v is not a valid project id. Update settings/settings.yaml file with your Google project id found in your GCP console. E.g. \"123456789\"", pid)
+					log.Warnf("%v is not a valid project id. Update %s/settings/settings.yaml file with your Google project id found in your GCP console. E.g. \"123456789\"", pid, proj.ProjectRoot())
 				}
 				spid, ok := pid.(string)
 				if !ok {
@@ -563,7 +564,7 @@ func (p *Studio) SetProjectID(flag string) error {
 	pid, err := pidFromSettings(p.ProjectRoot())
 	if err != nil && flag == "" {
 		// Case 1.
-		log.Errorf(`Project ID is missing. Specify the project ID in settings/settings.yaml, or via flag, if applicable.`)
+		log.Errorf(`Project ID is missing. Specify the project ID in %s/settings/settings.yaml, or via flag, if applicable.`, p.ProjectRoot())
 		return errors.New("no project ID is specified")
 	} else if err == nil && flag == "" && pid == "placeholder_project" {
 		// Case 2.
@@ -593,6 +594,11 @@ func (p *Studio) SetProjectRoot() error {
 	}
 	r, err := FindProjectRoot()
 	if err != nil {
+		// If .gactionsrc exists, but has empty/missing sdkPath key,
+		// we should fail.
+		if _, err = findFileUp(project.ConfigName); err == nil {
+			return errors.New(".gactionsrc was present, but sdkPath key is missing")
+		}
 		wd, err := os.Getwd()
 		if err != nil {
 			return err
@@ -604,20 +610,55 @@ func (p *Studio) SetProjectRoot() error {
 	return nil
 }
 
-// FindProjectRoot locates the root of the SDK project.
-func FindProjectRoot() (string, error) {
+func findFileUp(filename string) (string, error) {
 	cur, err := os.Getwd()
 	if err != nil {
 		return "", err
 	}
-	for !exists(filepath.Join(cur, "manifest.yaml")) {
+	for !exists(filepath.Join(cur, filename)) {
 		parent := filepath.Dir(cur)
 		if parent == cur {
-			return cur, errors.New("manifest.yaml was not found")
+			return cur, errors.New(filename)
 		}
 		cur = parent
 	}
 	return cur, nil
+}
+
+// FindProjectRoot locates the root of the SDK project.
+// It works by obtaining sdkPath field from CLI config (.gactionsrc.yaml),
+// which it finds by recursively traversing upwards.
+// sdkPath must be a non-empty string representing a path to sdk files.
+// Path can be relative or absolute. If CLI config is not found, CLI
+// will fallback to finding manifest.yaml.
+func FindProjectRoot() (string, error) {
+	configPath, err := findFileUp(project.ConfigName)
+	if err == nil {
+		f, err := ioutil.ReadFile(filepath.Join(configPath, project.ConfigName))
+		if err != nil {
+			return "", err
+		}
+		configFile := project.CLIConfig{}
+		if err = yaml.Unmarshal(f, &configFile); err != nil {
+			return "", err
+		}
+		// In case, Windows developers use forward slash, we should convert it to \\.
+		configFile.SdkPath = filepath.FromSlash(configFile.SdkPath)
+		if configFile.SdkPath == "" {
+			return "", fmt.Errorf("sdkPath is %s, but must be non-empty", configFile.SdkPath)
+		}
+		if filepath.IsAbs(configFile.SdkPath) {
+			return configFile.SdkPath, nil
+		}
+		return filepath.Join(configPath, configFile.SdkPath), nil
+	}
+	log.Infof(`Unable to find %q.`, project.ConfigName)
+	sdkDir, err := findFileUp("manifest.yaml")
+	if err != nil {
+		log.Infof(`Unable to find "manifest.yaml".`)
+		return "", err
+	}
+	return sdkDir, nil
 }
 
 func pidFromSettings(root string) (string, error) {

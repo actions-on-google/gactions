@@ -15,6 +15,16 @@
 // Package project contains an interface for an AoG project.
 package project
 
+const (
+	// ConfigName is filename of the file containing CLIConfig.
+	ConfigName = ".gactionsrc.yaml"
+)
+
+// CLIConfig represents a config file for CLI to read parameters from.
+type CLIConfig struct {
+	SdkPath string `yaml:"sdkPath"`
+}
+
 // SampleProject has information about sample projects that CLI supports.
 type SampleProject struct {
 	Name      string `json:"name"`

@@ -19,6 +19,7 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"os"
 
 	"github.com/actions-on-google/gactions/api/sdk"
 	"github.com/actions-on-google/gactions/log"
@@ -26,6 +27,14 @@ import (
 	"github.com/actions-on-google/gactions/project/studio"
 	"github.com/spf13/cobra"
 )
+
+// exists returns whether the given file or directory exists or not
+func exists(path string) bool {
+	if _, err := os.Stat(path); err != nil {
+		return os.IsExist(err)
+	}
+	return true
+}
 
 // AddCommand adds the push sub-command to the passed in root command.
 func AddCommand(ctx context.Context, root *cobra.Command, project project.Project) {
@@ -44,6 +53,17 @@ func AddCommand(ctx context.Context, root *cobra.Command, project project.Projec
 				if err := (&studioProj).SetProjectRoot(); err != nil {
 					return err
 				}
+			}
+			// RC file will have a faulty path -- try to create it.
+			if !exists(studioProj.ProjectRoot()) {
+				log.Infof("%q doesn't exist.", studioProj.ProjectRoot())
+				// 0750 sets permissions so that, (U)ser / owner can read,
+				// can write and can execute. (G)roup can read, can't write and can execute.
+				// (O)thers can't read, can't write and can't execute.
+				if err := os.MkdirAll(studioProj.ProjectRoot(), 0750); err != nil {
+					return err
+				}
+				log.Infof("Created %q", studioProj.ProjectRoot())
 			}
 			pid, err := cmd.Flags().GetString("project-id")
 			if err != nil {

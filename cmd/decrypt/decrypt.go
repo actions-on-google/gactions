@@ -84,8 +84,8 @@ func AddCommand(ctx context.Context, root *cobra.Command, proj project.Project) 
 		Long:  "This command decrypts the client secret key used in Account Linking. Specify a file path for the decrypt output. This can be a relative or absolute path.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if proj.ProjectRoot() == "" {
-				log.Errorf("Can't find a project root: manifest.yaml was not found in this or any of the parent folders.")
-				return errors.New("can not find manifest.yaml")
+				log.Errorf(`Can't find a project root. This may be because (1) %q was not found in this or any of the parent folders, or (2) if %q was found, but the key "sdkPath" was missing, or (3) if %q and manifest.yaml were both not found.`, project.ConfigName, project.ConfigName, project.ConfigName)
+				return errors.New("can not determine project root")
 			}
 			files, err := proj.Files()
 			if err != nil {

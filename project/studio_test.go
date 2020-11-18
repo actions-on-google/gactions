@@ -23,6 +23,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -571,7 +572,117 @@ func TestWriteToDiskToEmptyDir(t *testing.T) {
 	}
 }
 
-func TestFindProjectRoot(t *testing.T) {
+func TestFindProjectRootWithConfig(t *testing.T) {
+	tests := []struct {
+		names   []string
+		err     error
+		cwd     string
+		name    string
+		sdkPath string
+	}{
+		{
+			names: []string{
+				"manifest.yaml",
+				project.ConfigName,
+				filepath.Join("settings", "settings.yaml"),
+				filepath.Join("mywebhook", "index.js"),
+			},
+			err:     nil,
+			cwd:     "",
+			sdkPath: ".",
+			name:    "CLI config is found, sdkPath is . and cwd is .",
+		},
+		{
+			names: []string{
+				filepath.Join("sdk", "manifest.yaml"),
+				project.ConfigName,
+				filepath.Join("sdk", "settings", "settings.yaml"),
+				filepath.Join("sdk", "mywebhook", "index.js"),
+			},
+			err:     nil,
+			cwd:     "",
+			sdkPath: "sdk/",
+			name:    "CLI config is found, sdkPath is sdk/ and cwd is .",
+		},
+		{
+			names: []string{
+				filepath.Join("settings", "settings.yaml"),
+				filepath.Join("verticals", "foo.yaml"),
+			},
+			err:  fmt.Errorf("%s not found, and manifest is not present", project.ConfigName),
+			cwd:  "",
+			name: "CLI config is not found and manifest is not present",
+		},
+		{
+			names: []string{
+				filepath.Join("settings", "settings.yaml"),
+				filepath.Join("verticals", "foo.yaml"),
+				project.ConfigName,
+			},
+			cwd:     "settings",
+			err:     nil,
+			sdkPath: ".",
+			name:    "CLI config is found and cwd is settings",
+		},
+		{
+			names: []string{
+				filepath.Join("settings", "settings.yaml"),
+				filepath.Join("verticals", "foo.yaml"),
+				project.ConfigName,
+			},
+			cwd:  "settings",
+			err:  errors.New("sdkPath can not be empty"),
+			name: "CLI config is found and cwd is settings",
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			dirName, err := ioutil.TempDir(testutils.TestTmpDir, "actions-sdk-cli-project-folder")
+			if err != nil {
+				t.Fatalf("Can't create temporary directory under %q: %v", testutils.TestTmpDir, err)
+			}
+			defer os.RemoveAll(dirName)
+			for _, f := range tc.names {
+				if err := os.MkdirAll(filepath.Join(dirName, filepath.Dir(f)), 0777); err != nil {
+					t.Errorf("Can't create a directory %v, got %v", filepath.Join(dirName, filepath.Dir(f)), err)
+				}
+				content := []byte("hello")
+				if strings.Contains(f, project.ConfigName) {
+					content = []byte(fmt.Sprintf("sdkPath: %s", tc.sdkPath))
+				}
+				if err := ioutil.WriteFile(filepath.Join(dirName, f), content, 0666); err != nil {
+					t.Fatalf("Can't write a file under %q: %v", dirName, err)
+				}
+			}
+
+			// wkdir is where CLI config file will be located.
+			wkdir := dirName
+			if tc.cwd != "" {
+				wkdir = filepath.Join(wkdir, tc.cwd)
+			}
+			if err := os.Chdir(wkdir); err != nil {
+				t.Errorf("Could not cd into %v: %v", wkdir, err)
+			}
+			got, err := FindProjectRoot()
+			if runtime.GOOS == "darwin" {
+				// On MacOS, the actual dirname  resolves to /private/tmp/...
+				// See: https://apple.stackexchange.com/questions/1043/why-is-tmp-a-symlink-to-private-tmp
+				dirName = filepath.Join("/private", dirName)
+			}
+			if tc.err == nil {
+				if got != filepath.Join(dirName, tc.sdkPath) {
+					t.Errorf("findProjectRoot found %v as root, but should get %v", got, filepath.Join(dirName, tc.sdkPath))
+				}
+			} else {
+				if err == nil {
+					t.Errorf("findProjectRoot got %v, want %v", err, tc.err)
+				}
+			}
+		})
+	}
+}
+
+func TestFindProjectRootWithoutConfig(t *testing.T) {
 	tests := []struct {
 		names []string
 		err   error
@@ -631,6 +742,11 @@ func TestFindProjectRoot(t *testing.T) {
 				t.Errorf("Could not cd into %v: %v", wkdir, err)
 			}
 			got, err := FindProjectRoot()
+			if runtime.GOOS == "darwin" {
+				// On MacOS, the actual dirname  resolves to /private/tmp/...
+				// See: https://apple.stackexchange.com/questions/1043/why-is-tmp-a-symlink-to-private-tmp
+				dirName = filepath.Join("/private", dirName)
+			}
 			if tc.err == nil {
 				if got != dirName {
 					t.Errorf("findProjectRoot found %v as root, but should get %v", dirName, got)

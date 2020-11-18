@@ -24,6 +24,7 @@ go_library(
     deps = [
         ":project",
         "//api:yamlutils",
+        "@in_gopkg_yaml//:go_default_library",
         "//log",
     ],
 )
