@@ -9,13 +9,15 @@ To build this project, you will require [Bazel](https://bazel.build/).
 
 Build the CLI using `:gactions` Bazel rule.:
 
-*   Linux: `bazel build //gactions`.
+*   Linux: `bazel build --platforms=@io_bazel_rules_go//go/toolchain:linux_amd64 gactions`.
 
-*   Windows: `bazel build --cpu=x86_64-windows //gactions`
+*   Windows: `bazel build --platforms=@io_bazel_rules_go//go/toolchain:windows_amd64 gactions`
 
-*   Mac `bazel build --config=darwin_x86_64 //gactions`
+*   Mac `bazel build --platforms=@io_bazel_rules_go//go/toolchain:darwin_amd64 gactions`
 
 You will find the binary in `bazel-bin/gactions_/gactions`.
+
+**Note**: `bazel build gactions` will build for your local platform.
 
 ### Run Instructions
 
