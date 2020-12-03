@@ -10,4 +10,4 @@
 # 2. Deploy to prod.
 # 3. Submit commit to bump version APP_VERSION.
 
-APP_VERSION = "3.0.0"
+APP_VERSION = "3.2.0"
