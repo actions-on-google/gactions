@@ -78,6 +78,7 @@ const (
 )
 
 // NewHTTPClient returns a *http.Client created with all required scopes and permissions.
+// tokenFilepath can be set to "" if not otherwise defined.
 func NewHTTPClient(ctx context.Context, clientSecretKeyFile []byte, tokenFilepath string) (*http.Client, error) {
 	config, err := google.ConfigFromJSON(clientSecretKeyFile, builderAPIScope)
 	if err != nil {
@@ -134,19 +135,23 @@ func RemoveToken() error {
 	if err != nil {
 		return err
 	}
-	if !exists(s) {
+	return RemoveTokenWithFilename(s)
+}
+
+func RemoveTokenWithFilename(filename string) error {
+	if !exists(filename) {
 		log.Outf("Already logged out.")
 		return errors.New("already logged out")
 	}
-	b, err := ioutil.ReadFile(s)
+	b, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return err
 	}
-	log.Infof("Removing %s\n", s)
-	if err := os.Remove(s); err != nil {
+	log.Infof("Removing %s\n", filename)
+	if err := os.Remove(filename); err != nil {
 		return err
 	}
-	log.Infof("Successfully removed %s\n", s)
+	log.Infof("Successfully removed %s\n", filename)
 	return revokeToken(b)
 }
 

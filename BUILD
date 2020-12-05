@@ -21,40 +21,6 @@ go_binary(
     deps = [":cli"],
 )
 
-genrule(
-    name = "package_tar",
-    srcs = [":gactions"],
-    outs = [
-        "aog_cli.tar.gz",
-        "aog_cli.tar.gz.sha256",
-    ],
-    cmd = "&&".join([
-        "mkdir aog_cli",
-        "mv $(SRCS) aog_cli/",
-        "tar czvf $(@D)/aog_cli.tar.gz --owner=0 --group=0 --numeric-owner --mtime=@0 --dereference aog_cli",
-        "cd $(@D) && sha256sum aog_cli.tar.gz > aog_cli.tar.gz.sha256",
-    ]),
-)
-
-genrule(
-    name = "package_zip",
-    srcs = [":gactions"],
-    outs = [
-        "aog_cli.zip",
-        "aog_cli.zip.sha256",
-    ],
-    # NOTE: This assumes the output is packaged for windows! If you really want
-    # a zip in linux, you're doing it wrong. Use package_tar to get a tarball.
-    cmd = "&&".join([
-        "mkdir aog_cli",
-        "cp -Lr $(SRCS) aog_cli/",
-        "find aog_cli -type f \\! -name '*.*' -exec mv {} {}.exe \\;",
-        "find aog_cli -exec touch -d '1970-01-01' {} \\;",
-        "TZ=UTC zip -X -r $(@D)/aog_cli.zip aog_cli",
-        "cd $(@D) && sha256sum aog_cli.zip > aog_cli.zip.sha256",
-    ]),
-)
-
 go_library(
     name = "cli",
     srcs = [

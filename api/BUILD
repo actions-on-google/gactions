@@ -80,6 +80,7 @@ go_test(
         "@com_github_google_go_cmp//cmp/cmpopts:go_default_library",
         "@org_golang_x_oauth2//:go_default_library",
     ],
+    rundir = ".",
 )
 
 go_library(

@@ -1088,7 +1088,7 @@ func ListReleaseChannelsJSON(ctx context.Context, proj project.Project) ([]proje
 	if err != nil {
 		return nil, err
 	}
-	client, err := apiutils.NewHTTPClient(ctx, clientSecret)
+	client, err := apiutils.NewHTTPClient(ctx, clientSecret, "")
 	if err != nil {
 		return nil, err
 	}
@@ -1128,7 +1128,7 @@ func ListVersionsJSON(ctx context.Context, proj project.Project) ([]project.Vers
 	if err != nil {
 		return nil, err
 	}
-	client, err := apiutils.NewHTTPClient(ctx, clientSecret)
+	client, err := apiutils.NewHTTPClient(ctx, clientSecret, "")
 	if err != nil {
 		return nil, err
 	}

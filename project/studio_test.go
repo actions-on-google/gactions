@@ -93,6 +93,22 @@ func (p MockStudio) ProjectRoot() string {
 	return p.root
 }
 
+func obtainProjectDirectory(t *testing.T, got string, dirName string) string {
+	t.Helper()
+	prefix := ""
+	if runtime.GOOS == "darwin" {
+	
+	  if strings.HasPrefix(got, "/Volumes/BuildData/tmpfs") {
+		prefix = "/Volumes/BuildData/tmpfs"
+	  } else {
+		prefix = "/private"
+	  }
+	  return filepath.Join(prefix, dirName)
+	}
+	// Windows case
+	return filepath.Join(testutils.TestTmpRoot(), dirName)
+}
+
 var configFiles = map[string][]byte{
 	"verticals/character_alarm.yaml":           []byte("name: foo"),
 	"actions/actions.yaml":                     []byte("intent: bar"),
@@ -664,14 +680,10 @@ func TestFindProjectRootWithConfig(t *testing.T) {
 				t.Errorf("Could not cd into %v: %v", wkdir, err)
 			}
 			got, err := FindProjectRoot()
-			if runtime.GOOS == "darwin" {
-				// On MacOS, the actual dirname  resolves to /private/tmp/...
-				// See: https://apple.stackexchange.com/questions/1043/why-is-tmp-a-symlink-to-private-tmp
-				dirName = filepath.Join("/private", dirName)
-			}
+			directory := obtainProjectDirectory(t, got, dirName)
 			if tc.err == nil {
-				if got != filepath.Join(dirName, tc.sdkPath) {
-					t.Errorf("findProjectRoot found %v as root, but should get %v", got, filepath.Join(dirName, tc.sdkPath))
+				if got != filepath.Join(directory, tc.sdkPath) {
+					t.Errorf("findProjectRoot found %v as root, but should get %v", got, filepath.Join(directory, tc.sdkPath))
 				}
 			} else {
 				if err == nil {
@@ -742,14 +754,10 @@ func TestFindProjectRootWithoutConfig(t *testing.T) {
 				t.Errorf("Could not cd into %v: %v", wkdir, err)
 			}
 			got, err := FindProjectRoot()
-			if runtime.GOOS == "darwin" {
-				// On MacOS, the actual dirname  resolves to /private/tmp/...
-				// See: https://apple.stackexchange.com/questions/1043/why-is-tmp-a-symlink-to-private-tmp
-				dirName = filepath.Join("/private", dirName)
-			}
+			directory := obtainProjectDirectory(t, got, dirName)
 			if tc.err == nil {
-				if got != dirName {
-					t.Errorf("findProjectRoot found %v as root, but should get %v", dirName, got)
+				if got != directory {
+					t.Errorf("findProjectRoot found %v as root, but should get %v", directory, got)
 				}
 			} else {
 				if err == nil {

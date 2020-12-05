@@ -47,14 +47,17 @@ func TestRemoveTokenExists(t *testing.T) {
 	defer func() {
 		os.RemoveAll(d)
 	}()
+	if err := f.Close(); err != nil {
+		t.Errorf("Failed to close the file: got %v", err)
+	}
 	tokenCacheFile = func() (string, error) {
 		return f.Name(), nil
 	}
 	revokeToken = func(tokenFile []byte) error {
 		return nil
 	}
-	if err := RemoveToken(); err != nil {
-		t.Errorf("RemoveToken returned %v, want %v", err, nil)
+	if err := RemoveTokenWithFilename(f.Name()); err != nil {
+		t.Errorf("RemoveTokenWithFilename returned %v, want %v", err, nil)
 	}
 }
 
