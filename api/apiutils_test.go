@@ -117,7 +117,8 @@ func TestTokenWhenCachedTokenDoesNotExist(t *testing.T) {
 }
 
 func TestNewHTTPClientWhenCachedTokenDoesNotExist(t *testing.T) {
-	_, err := NewHTTPClient(context.Background(), []byte(`{"installed":{"redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}}`))
+	// Pass in a null token file
+	_, err := NewHTTPClient(context.Background(), []byte(`{"installed":{"redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}}`), "/tmp/token")
 	if err == nil {
 		t.Errorf("NewHTTPClient should throw an error when the cached token does not exist")
 	}

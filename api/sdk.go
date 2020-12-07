@@ -388,6 +388,7 @@ func WriteDraftJSON(ctx context.Context, proj project.Project) error {
 	client, err := apiutils.NewHTTPClient(
 		ctx,
 		clientSecret,
+		"",
 	)
 	if err != nil {
 		return err
@@ -462,7 +463,7 @@ func WritePreviewJSON(ctx context.Context, proj project.Project, sandbox bool) e
 	if err != nil {
 		return err
 	}
-	client, err := apiutils.NewHTTPClient(ctx, clientSecret)
+	client, err := apiutils.NewHTTPClient(ctx, clientSecret, "")
 	if err != nil {
 		return err
 	}
@@ -539,7 +540,7 @@ func CreateVersionJSON(ctx context.Context, proj project.Project, channel string
 	if err != nil {
 		return err
 	}
-	client, err := apiutils.NewHTTPClient(ctx, clientSecret)
+	client, err := apiutils.NewHTTPClient(ctx, clientSecret, "")
 	if err != nil {
 		return err
 	}
@@ -825,7 +826,7 @@ func EncryptSecretJSON(ctx context.Context, proj project.Project, secret string)
 	if err != nil {
 		return err
 	}
-	client, err := apiutils.NewHTTPClient(ctx, clientSecret)
+	client, err := apiutils.NewHTTPClient(ctx, clientSecret, "")
 	if err != nil {
 		return err
 	}
@@ -887,7 +888,7 @@ func DecryptSecretJSON(ctx context.Context, proj project.Project, secret string,
 	if err != nil {
 		return err
 	}
-	client, err := apiutils.NewHTTPClient(ctx, clientSecret)
+	client, err := apiutils.NewHTTPClient(ctx, clientSecret, "")
 	if err != nil {
 		return err
 	}
@@ -954,7 +955,7 @@ func ListSampleProjectsJSON(ctx context.Context, proj project.Project) ([]projec
 	if err != nil {
 		return nil, err
 	}
-	client, err := apiutils.NewHTTPClient(ctx, clientSecret)
+	client, err := apiutils.NewHTTPClient(ctx, clientSecret, "")
 	if err != nil {
 		return nil, err
 	}
@@ -1017,7 +1018,7 @@ func setupClient(ctx context.Context, proj project.Project) (*http.Client, error
 	if err != nil {
 		return nil, err
 	}
-	client, err := apiutils.NewHTTPClient(ctx, clientSecret)
+	client, err := apiutils.NewHTTPClient(ctx, clientSecret, "")
 	if err != nil {
 		return nil, err
 	}

@@ -78,14 +78,19 @@ const (
 )
 
 // NewHTTPClient returns a *http.Client created with all required scopes and permissions.
-func NewHTTPClient(ctx context.Context, clientSecretKeyFile []byte) (*http.Client, error) {
+func NewHTTPClient(ctx context.Context, clientSecretKeyFile []byte, tokenFilepath string) (*http.Client, error) {
 	config, err := google.ConfigFromJSON(clientSecretKeyFile, builderAPIScope)
 	if err != nil {
 		return nil, err
 	}
-	tokenCacheFilename, err := tokenCacheFile()
-	if err != nil {
-		return nil, err
+	tokenCacheFilename := ""
+	if tokenFilepath == "" {
+		tokenCacheFilename, err = tokenCacheFile()
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		tokenCacheFilename = tokenFilepath
 	}
 	if !exists(tokenCacheFilename) {
 		log.Infoln("Could not locate OAuth2 token")
