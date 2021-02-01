@@ -1,0 +1,49 @@
+#  Copyright 2021 Google LLC
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+google_fulfillments:
+  - new_field: new_value
+    name: actions.fulfillment.character_alarm
+    supported_api_version: 2
+    webhook:
+      base_url: https://www.google.com
+      http_headers:
+        content-type: application/json
+      endpoint_api_version: 1
+    character_alarms_settings:
+      confirmation_audio:
+        - $resources.audio.confirmation_01
+      ringtone_intro_audio:
+        - $resources.audio.ringtone_intro_01
+      ringtone_audio:
+        - $resources.audio.ringtone_loop_01
+      followup_audio:
+        - $resources.audio.followup_01
+      snooze_audio:
+        - $resources.audio.snooze_01
+      character_image: $resources.images.square
+      ringtone_repeat_count: 7
+      character: LEGO City
+      character_synonyms:
+        - city
+        - Jake Early
+      character_categories:
+        - lego_character
+      character_themes:
+        - icon_image: $resources.images.icon
+          full_image: $resources.images.square
+          background_color: "#FFFFFF"
+          followup_image: $resources.images.landscape
+          selection_image: $resources.images.square
+    supported_capability_names:
+      - phone

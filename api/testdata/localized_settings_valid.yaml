@@ -11,8 +11,10 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-accountLinking:
-  enableAccountCreation: true
-  linkingType: GOOGLE_SIGN_IN
-category: GAMES_AND_TRIVIA
-projectId: placeholder-project
+display_name: "Лего будильники"
+invocation_name: "лего будильники"
+small_logo_image: "$resources.images.ru.logo.png"
+sample_invocations:
+  - "Поговори с лего будильниками"
+theme_customization:
+  landscape_background_image: "$resources.images.ru.background.png"

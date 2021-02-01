@@ -11,8 +11,13 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-accountLinking:
-  enableAccountCreation: true
-  linkingType: GOOGLE_SIGN_IN
-category: GAMES_AND_TRIVIA
-projectId: placeholder-project
+google_fulfillments:
+  - name: actions.fulfillment.character_alarm
+    supported_api_version: 2
+    webhook:
+      base_url: https://www.google.com
+      http_headers:
+        content-type: application/json
+      endpoint_api_version: 1
+    supported_capability_names:
+      - phone
