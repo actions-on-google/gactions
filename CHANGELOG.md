@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Update descriptions of commands
 * Update build instructions
 * Rename `BUILD` files to `BUILD.bazel`
+* Add application usage to README
 
 ### Fixed
 * Escape version-id to prevent URLs being sent in it
