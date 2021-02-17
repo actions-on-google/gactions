@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
 ## [3.2.0] - 2021-02-22
 ### Added
 * Add a configuration script to check for Bazel and update PATH
@@ -17,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Update versions command description
 * Update descriptions of commands
 * Update build instructions
+* Rename `BUILD` files to `BUILD.bazel`
 
 ### Fixed
 * Escape version-id to prevent URLs being sent in it
