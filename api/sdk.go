@@ -37,10 +37,10 @@ import (
 
 	"github.com/actions-on-google/gactions/api/apiutils"
 	"github.com/actions-on-google/gactions/api/request"
-	"github.com/actions-on-google/gactions/cmd/version"
 	"github.com/actions-on-google/gactions/log"
 	"github.com/actions-on-google/gactions/project"
 	"github.com/actions-on-google/gactions/project/studio"
+	"github.com/actions-on-google/gactions/versions"
 	"gopkg.in/yaml.v2"
 )
 
@@ -764,7 +764,7 @@ func addClientHeaders(req *http.Request) {
 	if Consumer != "" {
 		req.Header.Add("Gactions-Consumer", Consumer)
 	}
-	ua := fmt.Sprintf("gactions/%s (%s %s)", version.CliVersion, runtime.GOOS, runtime.GOARCH)
+	ua := fmt.Sprintf("gactions/%s (%s %s)", versions.CliVersion, runtime.GOOS, runtime.GOARCH)
 	req.Header.Add("User-Agent", ua)
 }
 

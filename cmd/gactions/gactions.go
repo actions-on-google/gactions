@@ -17,23 +17,14 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 
-	"github.com/actions-on-google/gactions/cli"
+	"github.com/actions-on-google/gactions/cmd/gactions/cli"
+	"github.com/actions-on-google/gactions/versions"
 )
-
-// Those variables are passed in via -X flags (see BUILD)
-var (
-	version    string
-)
-
-func cliVersion(semver string) string {
-	return fmt.Sprintf("%s", semver)
-}
 
 func main() {
 	ctx := context.Background()
-	cmd := cli.Command(ctx, "gactions", false, cliVersion(version))
+	cmd := cli.Command(ctx, "gactions", false, versions.CliVersion)
 	os.Exit(cli.Execute(cmd))
 }

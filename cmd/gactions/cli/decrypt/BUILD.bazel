@@ -3,7 +3,7 @@ load("@bazel_gazelle//:def.bzl", "gazelle")
 
 package(default_visibility = ["//visibility:public"])
 
-# gazelle:prefix github.com/actions-on-google/gactions/cmd/decrypt
+# gazelle:prefix github.com/actions-on-google/gactions/cmd/gactions/cli/decrypt
 gazelle(name = "gazelle")
 
 test_suite(
@@ -14,7 +14,7 @@ test_suite(
 go_library(
     name = "decrypt",
     srcs = ["decrypt.go"],
-    importpath = "github.com/actions-on-google/gactions/cmd/decrypt",
+    importpath = "github.com/actions-on-google/gactions/cmd/gactions/cli/decrypt",
     deps = [
         "//api:sdk",
         "//log",

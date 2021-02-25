@@ -1,9 +1,26 @@
 # Isolate version package from others.
-
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+load("//versions:version_names.bzl", "APP_VERSION")
+load("@bazel_gazelle//:def.bzl", "gazelle")
+
+# gazelle:prefix github.com/actions-on-google/gactions/versions
+gazelle(name = "gazelle")
 
 bzl_library(
     name = "version_names_bzl",
     srcs = ["version_names.bzl"],
     visibility = ["//visibility:private"],
+)
+
+go_library(
+    name = "versions",
+    srcs = ["versions.go"],
+    importpath = "github.com/actions-on-google/gactions/versions",
+    deps = [],
+    # https://github.com/bazelbuild/rules_go/blob/master/go/core.rst#defines-and-stamping
+    x_defs = {
+        'CliVersion': APP_VERSION,
+    },
+    visibility = ["//visibility:public"],
 )

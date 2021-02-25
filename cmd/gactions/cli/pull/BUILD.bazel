@@ -3,15 +3,16 @@ load("@bazel_gazelle//:def.bzl", "gazelle")
 
 package(default_visibility = ["//visibility:public"])
 
-# gazelle:prefix github.com/actions-on-google/gactions/cmd/releasechannel
+# gazelle:prefix github.com/actions-on-google/gactions/cmd/gactions/cli/pull
 gazelle(name = "gazelle")
 
 go_library(
-    name = "releasechannels",
-    srcs = ["releasechannels.go"],
-    importpath = "github.com/actions-on-google/gactions/cmd/releasechannels",
+    name = "pull",
+    srcs = ["pull.go"],
+    importpath = "github.com/actions-on-google/gactions/cmd/gactions/cli/pull",
     deps = [
         "//api:sdk",
+        "//log",
         "//project",
         "//project:studio",
         "@com_github_spf13_cobra//:go_default_library",

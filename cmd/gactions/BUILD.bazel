@@ -1,0 +1,18 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@bazel_gazelle//:def.bzl", "gazelle")
+
+package(default_visibility = ["//visibility:public"])
+
+# gazelle:prefix github.com/actions-on-google/gactions/cmd
+gazelle(name = "gazelle")
+
+go_library(
+    name = "gactions",
+    srcs = ["gactions.go"],
+    importpath = "github.com/actions-on-google/gactions/cmd/gactions",
+    deps = [
+        "//cmd/gactions/cli:cli",
+        "//versions",
+    ],
+    visibility = ["//visibility:public"],
+)

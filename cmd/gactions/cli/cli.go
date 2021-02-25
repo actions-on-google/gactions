@@ -19,18 +19,18 @@ import (
 	"context"
 
 	"github.com/actions-on-google/gactions/api/sdk"
-	"github.com/actions-on-google/gactions/cmd/decrypt"
-	"github.com/actions-on-google/gactions/cmd/deploy"
-	"github.com/actions-on-google/gactions/cmd/encrypt"
-	"github.com/actions-on-google/gactions/cmd/ginit"
-	"github.com/actions-on-google/gactions/cmd/login"
-	"github.com/actions-on-google/gactions/cmd/logout"
-	"github.com/actions-on-google/gactions/cmd/notices"
-	"github.com/actions-on-google/gactions/cmd/pull"
-	"github.com/actions-on-google/gactions/cmd/push"
-	"github.com/actions-on-google/gactions/cmd/releasechannels"
-	"github.com/actions-on-google/gactions/cmd/version"
-	"github.com/actions-on-google/gactions/cmd/versions"
+	"github.com/actions-on-google/gactions/cmd/gactions/cli/decrypt"
+	"github.com/actions-on-google/gactions/cmd/gactions/cli/deploy"
+	"github.com/actions-on-google/gactions/cmd/gactions/cli/encrypt"
+	"github.com/actions-on-google/gactions/cmd/gactions/cli/ginit"
+	"github.com/actions-on-google/gactions/cmd/gactions/cli/login"
+	"github.com/actions-on-google/gactions/cmd/gactions/cli/logout"
+	"github.com/actions-on-google/gactions/cmd/gactions/cli/notices"
+	"github.com/actions-on-google/gactions/cmd/gactions/cli/pull"
+	"github.com/actions-on-google/gactions/cmd/gactions/cli/push"
+	"github.com/actions-on-google/gactions/cmd/gactions/cli/releasechannels"
+	"github.com/actions-on-google/gactions/cmd/gactions/cli/version"
+	"github.com/actions-on-google/gactions/cmd/gactions/cli/versions"
 	"github.com/actions-on-google/gactions/log"
 	"github.com/actions-on-google/gactions/project/studio"
 	"github.com/spf13/cobra"
@@ -51,16 +51,11 @@ func Command(ctx context.Context, name string, debug bool, ver string) *cobra.Co
 		SilenceErrors: true, // Would like to print errors ourselves.
 	}
 	root.PersistentFlags().BoolP(verboseFlagName, "v", false, "Display additional error information")
-	
+
 	root.PersistentFlags().String(consumerFlagName, "", "String identifying the caller to Google")
 	// This field is hidden as it's not documented and only used by tooling partners using the CLI.
 	root.PersistentFlags().MarkHidden(consumerFlagName)
-	
-	if ver == "" {
-		version.CliVersion = "gactions_debug"
-	} else {
-		version.CliVersion = ver
-	}
+
 	projectRoot, err := studio.FindProjectRoot()
 	if err != nil {
 		projectRoot = "" // not found

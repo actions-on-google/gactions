@@ -3,18 +3,16 @@ load("@bazel_gazelle//:def.bzl", "gazelle")
 
 package(default_visibility = ["//visibility:public"])
 
-# gazelle:prefix github.com/actions-on-google/gactions/cmd/deploy
+# gazelle:prefix github.com/actions-on-google/gactions/cmd/gactions/cli/version
 gazelle(name = "gazelle")
 
 go_library(
-    name = "deploy",
-    srcs = ["deploy.go"],
-    importpath = "github.com/actions-on-google/gactions/cmd/deploy",
+    name = "version",
+    srcs = ["version.go"],
+    importpath = "github.com/actions-on-google/gactions/cmd/gactions/cli/version",
     deps = [
-        "//api:sdk",
         "//log",
-        "//project",
-        "//project:studio",
+        "//versions",
         "@com_github_spf13_cobra//:go_default_library",
     ],
 )

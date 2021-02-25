@@ -3,18 +3,23 @@ load("@bazel_gazelle//:def.bzl", "gazelle")
 
 package(default_visibility = ["//visibility:public"])
 
-# gazelle:prefix github.com/actions-on-google/gactions/cmd/pull
+# gazelle:prefix github.com/actions-on-google/gactions/cmd/gactions/cli/login
 gazelle(name = "gazelle")
 
+test_suite(
+    name = "all_tests",
+    tags = ["-notwindows"],
+)
+
 go_library(
-    name = "pull",
-    srcs = ["pull.go"],
-    importpath = "github.com/actions-on-google/gactions/cmd/pull",
+    name = "login",
+    srcs = ["login.go"],
+    importpath = "github.com/actions-on-google/gactions/cmd/gactions/cli/login",
     deps = [
+        "//api:apiutils",
         "//api:sdk",
         "//log",
         "//project",
-        "//project:studio",
         "@com_github_spf13_cobra//:go_default_library",
     ],
 )

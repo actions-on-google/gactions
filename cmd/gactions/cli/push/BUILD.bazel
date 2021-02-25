@@ -3,7 +3,7 @@ load("@bazel_gazelle//:def.bzl", "gazelle")
 
 package(default_visibility = ["//visibility:public"])
 
-# gazelle:prefix github.com/actions-on-google/gactions/cmd/ginit
+# gazelle:prefix github.com/actions-on-google/gactions/cmd/gactions/cli/push
 gazelle(name = "gazelle")
 
 test_suite(
@@ -12,25 +12,27 @@ test_suite(
 )
 
 go_library(
-    name = "ginit",
-    srcs = ["ginit.go"],
-    importpath = "github.com/actions-on-google/gactions/cmd/ginit",
+    name = "push",
+    srcs = ["push.go"],
+    importpath = "github.com/actions-on-google/gactions/cmd/gactions/cli/push",
     deps = [
         "//api:sdk",
         "//log",
         "//project",
+        "//project:studio",
         "@com_github_spf13_cobra//:go_default_library",
     ],
 )
 
 go_test(
-    name = "ginit_test",
+    name = "push_test",
     size = "small",
-    srcs = ["ginit_test.go"],
-    embed = [":ginit"],
+    srcs = ["push_test.go"],
+    embed = [":push"],
     tags = ["notwindows"],
     deps = [
         "//project",
+        "//project:studio",
         "@com_github_spf13_cobra//:go_default_library",
     ],
 )

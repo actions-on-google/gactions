@@ -3,7 +3,7 @@ load("@bazel_gazelle//:def.bzl", "gazelle")
 
 package(default_visibility = ["//visibility:public"])
 
-# gazelle:prefix github.com/actions-on-google/gactions/cmd/notices
+# gazelle:prefix github.com/actions-on-google/gactions/cmd/gactions/cli/notices
 gazelle(name = "gazelle")
 
 go_embed_data(
@@ -21,7 +21,7 @@ go_library(
         ":licenses_go",
         "notices.go",
     ],
-    importpath = "github.com/actions-on-google/gactions/cmd/notices",
+    importpath = "github.com/actions-on-google/gactions/cmd/gactions/cli/notices",
     deps = [
         "//log",
         "@com_github_spf13_cobra//:go_default_library",

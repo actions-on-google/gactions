@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Update build instructions
 * Rename `BUILD` files to `BUILD.bazel`
 * Add application usage to README
+* Refactor main packages to `cmd/gactions` directory
+* Refactor cmd packages to `cmd/gactions/cli` directory
 
 ### Fixed
 * Escape version-id to prevent URLs being sent in it

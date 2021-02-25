@@ -17,13 +17,8 @@ package version
 
 import (
 	"github.com/actions-on-google/gactions/log"
+	"github.com/actions-on-google/gactions/versions"
 	"github.com/spf13/cobra"
-)
-
-var (
-	// CliVersion is a version of the CLI. It has the following format: x.y.z.
-	// Example: 3.0.0.
-	CliVersion string
 )
 
 // AddCommand adds the push sub-command to the passed in root command.
@@ -33,7 +28,7 @@ func AddCommand(root *cobra.Command) {
 		Short: "Prints current version of the CLI.",
 		Long:  "Prints current version of the CLI.",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			log.Outf("%s\n", CliVersion)
+			log.Outf("%s\n", versions.CliVersion)
 			return nil
 		},
 		Args: cobra.NoArgs,
