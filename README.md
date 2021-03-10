@@ -62,6 +62,29 @@ gactions deploy preview
 
 Read the [quick start documentation](https://developers.google.com/assistant/conversational/quickstart) to learn more.
 
+## Google Cloud Project Setup
+
+1.  Create a [Google Cloud project](https://console.developers.google.com).
+1.  Enable the Actions API for your project:
+    1. Visit the [Google API console](https://console.developers.google.com/apis/library) and select your project from the **Select a project** dropdown.
+    1. If the Actions API is not enabled, search for *"Actions API"* and click **Enable**.
+1.  Create a OAuth Client Id:
+    1. Visit the [Google Cloud console credentials page](https://console.developers.google.com/apis/credentials) and select your project from the **Select a project** dropdown.
+    1. Click the "Create credentials" button and then select "OAuth Client Id".
+    1. Select **Application Type** "Desktop app"
+    1. Enter an OAuth client name and click **Create**.
+    1. Configure the [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent) and add your email as a test account.
+    1. Return to the [Google Cloud console credentials page](https://console.developers.google.com/apis/credentials)
+    1. Click the download icon next to the newly-created OAuth client name to download the JSON file.
+    1. Move the file to a file named `data/client_not_so_secret.json` in this directory.
+
+**Note**: If you are running this alongside the [official gactions binary](https://developers.google.com/assistant/actionssdk/gactions)
+, you will need to regenerate authentication credentials. To reset these
+credentials:
+
+1. Run `bazel run gactions logout`.
+1. Run `bazel run gactions login`.
+
 ## Build Instructions
 
 To build this project, you will require [Bazel](https://bazel.build/).
