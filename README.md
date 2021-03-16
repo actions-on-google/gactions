@@ -3,6 +3,15 @@
 This repository contains source code for the CLI used to communicate with
 [Actions SDK](https://developers.google.com/assistant/actionssdk/gactions).
 
+## Install
+
+The latest version of this tool can be installed [directly from developers.google.com]((https://developers.google.com/assistant/actionssdk/gactions))
+or via NPM:
+
+```
+npm install -g @assistant/gactions
+```
+
 ## Usage
 
 ```
